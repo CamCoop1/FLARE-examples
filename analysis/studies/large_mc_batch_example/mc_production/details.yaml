@@ -1,0 +1,10 @@
+"$schema": "flare/src/schemas/mc_production_details.json"
+
+prodtype : whizard
+
+datatype:
+    - wzp6_ee_nunuH_Hbb_ecm240
+    - wzp6_ee_mumuH_Hbb_ecm240
+    - wzp6_ee_bbH_HWW_ecm240
+    - wzp6_ee_bbH_Hbb_ecm240
+    
