@@ -10,7 +10,7 @@ import flare
 from flare.src.mc_production.mc_production_types import get_mc_production_types
 from flare.src.mc_production.tasks import get_mc_prod_stages_dict
 from flare.src.utils.tasks import OutputMixin
-from flare.cli.arguments import get_pure_args
+from flare.cli.arguments import get_args
 
 
 # Branching fraction from 2024 PDG https://pdg.lbl.gov/2024/reviews/rpp2024-rev-higgs-boson.pdf
@@ -150,7 +150,7 @@ class CompileCrossSections(OutputMixin, luigi.DispatchableTask):
 
 if __name__ == "__main__":
     
-    args = get_pure_args()
+    args = get_args()
     # build_executable_and_save_to_settings_manager(args)
     # load_settings_into_manager(args)
     flare.process(
