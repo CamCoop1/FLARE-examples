@@ -44,12 +44,12 @@ python3 analysis/studies/calculate_whizard_cross_section_example/calculate_whiza
 
 
 # Note
-Instead of adjusting hte commandline arguments, you can instead just change the settings inside the `analysis/config/details.yaml` each time you wish to run an example. Then, when you call the flare CLI or your own custom workflow (see [Whizard Cross Section](#whizard_cross_section))
+Instead of adjusting the commandline arguments, you can instead just change the settings inside the `analysis/config/details.yaml` each time you wish to run an example. Then, when you call the flare CLI or your own custom workflow (see [Whizard Cross Section](#whizard_cross_section))
 just parse the `--config-yaml` argument like so:
 
 ```
-flare run analysis --config-yaml
-flare run mcproduction --config-yaml
-python3 custom_workflow.py --config-yaml
+flare run analysis --config-yaml analysis/config
+flare run mcproduction --config-yaml analysis/config
+python3 custom_workflow.py --config-yaml analysis/config
 ```
 
