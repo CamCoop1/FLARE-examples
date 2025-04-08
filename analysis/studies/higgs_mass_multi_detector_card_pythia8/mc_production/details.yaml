@@ -1,0 +1,20 @@
+"$model" : "UserMCProdConfigModel"
+
+datatype:
+    # - wzp6_ee_nunuH_Hbb_ecm240
+    - wzp6_ee_mumuH_Hbb_ecm240:
+        prodtype: whizard
+    # - wzp6_ee_bbH_HWW_ecm240
+    # - wzp6_ee_bbH_Hbb_ecm240
+    - p8_ee_WW_ecm240 : 
+        prodtype : pythia8
+    - p8_ee_ZZ_ecm240 : 
+        prodtype : pythia8
+
+card:
+    - card_IDEA
+    - card_IDEA_SiTracking
+    - card_IDEA_3T
+    - card_IDEA_lighterVXD_35pc
+    - card_IDEA_lighterVXD_50pc
+    - card_IDEA_better_singlehitReso_30pc_lighterVXD_50pc

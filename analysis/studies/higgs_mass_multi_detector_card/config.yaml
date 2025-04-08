@@ -1,0 +1,10 @@
+# FLARE Setting
+name : paper_examples
+version:  multiple_detector_card_example
+description: Example to show the ability to loop over multiple detector cards and run an FCC Analysis
+# studydir: analysis/studies/multiple_detector_card_example
+
+# b2luigi settings
+batch_system: slurm
+slurm_settings: 
+  mem: 5GB
