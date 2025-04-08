@@ -1,16 +1,13 @@
 "$model" : "UserMCProdConfigModel"
 
-prodtype : whizard #madgraph
+prodtype : whizard
 
 datatype:
-    # - p8_ee_HZ_Zbb
     - wzp6_ee_nunuH_Hbb_ecm240
     - wzp6_ee_mumuH_Hbb_ecm240
     - wzp6_ee_bbH_HWW_ecm240
     - wzp6_ee_bbH_Hbb_ecm240
-    # - wzp6_ee_qq_ecm240
-    # # - wzp6_ee_qqqq_ecm240
-
+    
 card:
     - card_IDEA
     - card_IDEA_SiTracking
