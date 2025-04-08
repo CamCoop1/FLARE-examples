@@ -35,13 +35,29 @@ flare run mcproduction --version=large_mc_batch_example --study-dir analysis/stu
 ```
 
 # Whizard Cross Section 
-To whizard cross section calculation is a custom workflow that uses the flare functionality to take the whizard production step of the MC Production workflow and create our own workflow. To do this, we use the `get_args` cli tool
+The whizard cross section calculation is a custom workflow that uses the flare functionality to take the whizard production step of the MC Production workflow and create our own workflow. To do this, we use the `get_args` cli tool
 inside of `flare.cli.arguments`. By passing the parsed arguments to the `flare.process` function, flare handles the entire workflow for you. Run the following command to try it out
 
 ```
 python3 analysis/studies/calculate_whizard_cross_section_example/calculate_whizard_cross_section.py --version=large_mc_batch_example --study-dir analysis/studies/calculate_whizard_cross_section_example  --config-yaml analysis/config/ --mcprod
 ```
 
+# Whizard Multiple Detector Card Example
+The multiple detector example displays flare's ability to produce MC using any number of detector cards. The MC config yaml can be found inside the `analysis/studies/multiple_detector_card_example/mc_production/details.yaml`. 
+To enable flare's multi-card capability, the user must set the `card` list in their config like so:
+
+``` YAML
+card : 
+    - card_IDEA
+    - card_IDEA_3T
+    - card_IDEA_SiTracking
+```
+
+These names must match those of the cards in your `mc_production` directory. To run this example use the following command:
+
+```
+flare run mcproduction --study-dir analysis/studies/multiple_detector_card_example --config-yaml analysis/studies/multiple_detector_card_example
+```
 
 # Note
 Instead of adjusting the commandline arguments, you can instead just change the settings inside the `analysis/config/details.yaml` each time you wish to run an example. Then, when you call the flare CLI or your own custom workflow (see [Whizard Cross Section](#whizard_cross_section))
