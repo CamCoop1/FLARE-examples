@@ -1,0 +1,66 @@
+#!/usr/bin/env python3
+import os
+import pickle
+
+import basf2
+from basf2 import pickle_path as b2pp
+from variables import variables as vm
+
+
+def get_alias_dict_from_file(file_path):
+    """
+    Returns alias dictionary from pickle file.  If no aliases are stored in the
+    pickle file, returns an empty dictionary.
+    """
+    with open(file_path, 'br') as pickle_file:
+        serialized = pickle.load(pickle_file)
+    try:
+        return serialized["aliases"]
+    except KeyError:
+        return {}
+
+
+def apply_alias_dict_from_file(file_path):
+    """
+    Extract alias dictionary from pickle file and adds them to the variable manager
+    """
+    alias_dict = get_alias_dict_from_file(file_path)
+    for alias_name, alias_value in alias_dict.items():
+        vm.addAlias(alias_name, alias_value)
+
+
+def get_global_tags_from_file(file_path):
+    """
+    Extract list of global tags from pickle file, and update the list of global tags.
+    """
+    with open(file_path, 'br') as pickle_file:
+        serialized = pickle.load(pickle_file)
+    try:
+        basf2.conditions.globaltags += serialized["globaltags"]
+    except KeyError:
+        pass
+
+def set_log_level_from_file(file_path):
+    """
+    Extract and set global basf2 log level from pickle file.
+    """
+    with open(file_path, 'br') as pickle_file:
+        serialized = pickle.load(pickle_file)
+    try:
+        basf2.set_log_level(serialized["log_level"])
+    except KeyError:
+        pass
+
+pickle_file_path = "{{ pickle_file_path }}"
+if not os.path.isfile(pickle_file_path):
+    raise FileNotFoundError(f"No pickle file found in {pickle_file_path}")
+
+apply_alias_dict_from_file(pickle_file_path)
+get_global_tags_from_file(pickle_file_path)
+set_log_level_from_file(pickle_file_path)
+
+path = b2pp.get_path_from_file(pickle_file_path)
+
+basf2.print_path(path)
+basf2.process(path, max_event={{ max_event }})
+print(basf2.statistics)

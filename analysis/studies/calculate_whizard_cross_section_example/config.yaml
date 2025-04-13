@@ -1,0 +1,7 @@
+# FLARE Setting
+name : paper_examples
+version:  calculate_whizard_cross_section/run1
+description: Paper examples of MC production, analysis workflow and full blown production. Will include this in paper as example
+
+# b2luigi settings
+batch_system: slurm

@@ -106,8 +106,8 @@ class ExtractCrossSectionFromWhizardLog(OutputMixin, luigi.DispatchableTask):
             )
 
         total_cs_fb = cs_fb * BFs[self.datatype]
-        total_cs_pb = total_cs_fb.to(pb).value
-
+        total_cs_pb = round(total_cs_fb.to(pb).value, 5)
+        
         with open(self.get_output_file_name(self.output_file_name), "w") as f:
             f.write(f"{self.datatype}: {total_cs_pb}\n")
 

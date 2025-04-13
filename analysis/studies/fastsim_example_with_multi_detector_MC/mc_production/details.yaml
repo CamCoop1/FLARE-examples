@@ -1,0 +1,13 @@
+"$model" : "UserMCProdConfigModel"
+
+global_prodtype: pythia8
+# global_env_script_path : /remote/nas00-1/users/charris/phd/fcc/FLARE-examples/analysis/studies/fastsim_example_with_multi_detector_MC/mc_production/setup.sh
+
+datatype:
+    - p8_ee_ZH_Zmumu_ecm240 
+
+card:
+    - card_IDEA
+    - card_IDEA_lighterVXD_35pc
+    - card_IDEA_lighterVXD_50pc
+    

@@ -1,6 +1,6 @@
-"$schema": "flare/src/schemas/mc_production_details.json"
+'$model' : UserMCProdConfigModel
 
-prodtype : whizard
+global_prodtype : whizard
 
 datatype:
     - wzp6_ee_nunuH_Hbb_ecm240
