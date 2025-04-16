@@ -14,7 +14,15 @@ processList = {
     "p8_ee_ZH_Zmumu_ecm240_card_IDEA_lighterVXD_50pc": {
         "fraction": 1,
         "crossSection": 0.201868 * 0.034,
-    },        
+    },    
+    "p8_ee_ZH_Zmumu_ecm240_card_IDEA_3T": {
+        "fraction": 1,
+        "crossSection": 0.201868 * 0.034,
+    },    
+    "p8_ee_ZH_Zmumu_ecm240_card_IDEA_SiTracking": {
+        "fraction": 1,
+        "crossSection": 0.201868 * 0.034,
+    },            
 }
 # Production tag when running over EDM4Hep centrally produced events, this points to the yaml files for getting sample statistics (mandatory)
 #prodTag = "FCCee/winter2023/IDEA/"
@@ -36,7 +44,7 @@ intLumi = 5000000  # 5 /ab
 bins_p_mu = (2000, 0, 200)  # 100 MeV bins
 bins_m_ll = (2000, 0, 200)  # 100 MeV bins
 bins_p_ll = (2000, 0, 200)  # 100 MeV bins
-bins_recoil = (200000, 0, 200)  # 1 MeV bins
+bins_recoil = (200, 0, 200)  # 1 MeV bins
 bins_cosThetaMiss = (10000, 0, 1)
 
 bins_m_jj = (100, 50, 150)  # 1 GeV bins

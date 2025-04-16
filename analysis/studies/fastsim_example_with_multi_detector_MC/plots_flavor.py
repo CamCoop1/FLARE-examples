@@ -12,49 +12,61 @@ delphesVersion = "3.4.2"
 energy = 240.0
 collider = "FCC-ee"
 formats = ["png", "pdf"]
-plotStatUnc = True
+plotStatUnc = False
+customLabel = 'Hello'
 
 colors = {}
-colors["ZH_IDEA"] = ROOT.kRed
-colors["ZH_IDEA_lighterVXD_35pc"] = ROOT.kGreen + 2
-colors["ZH_IDEA_lighterVXD_50pc"] = ROOT.kBlue + 2
+colors["IDEA"] =ROOT.kGreen - 10
+colors["lighterVXD_35pc"] = ROOT.kGreen + 2
+colors["lighterVXD_50pc"] = ROOT.kBlue + 2
+colors["3T"] = ROOT.kRed+3
+colors["SiTracking"] =  ROOT.kRed
 
-procs = {}
-procs["signal"] = {"ZH_IDEA": ["p8_ee_ZH_Zmumu_ecm240_card_IDEA"]}
+procs ={} # {"backgrounds" : None}
 procs["backgrounds"] = {
-    "ZH_IDEA_lighterVXD_35pc": ["p8_ee_ZH_Zmumu_ecm240_card_IDEA_lighterVXD_35pc"],
-    "ZH_IDEA_lighterVXD_50pc": ["p8_ee_ZH_Zmumu_ecm240_card_IDEA_lighterVXD_50pc"],    
+    "IDEA": ["p8_ee_ZH_Zmumu_ecm240_card_IDEA"],   
 }
 
-legend = {}
-legend["ZH_IDEA"] = "ZH_IDEA"
-legend["ZH_IDEA_lighterVXD_35pc"] = "ZH_IDEA_lighterVXD_35pc"
-legend["ZH_IDEA_lighterVXD_50pc"] = "ZH_IDEA_lighterVXD_50pc"
+procs['signal'] = {
+    "lighterVXD_35pc": ["p8_ee_ZH_Zmumu_ecm240_card_IDEA_lighterVXD_35pc"],
+    "lighterVXD_50pc": ["p8_ee_ZH_Zmumu_ecm240_card_IDEA_lighterVXD_50pc"],    
+    "3T": ["p8_ee_ZH_Zmumu_ecm240_card_IDEA_3T"],    
+    "SiTracking" : ["p8_ee_ZH_Zmumu_ecm240_card_IDEA_SiTracking"],    
+}
+
+
+
+#legendTextSize =  0.015
+legendCoord = [0.60,0.45,0.75,0.85]
+
+legend = {key: key for samples in procs.values() for key in samples}
+
+
 
 hists = {}
 
 hists["zmumu_recoil_m"] = {
     "output": "zmumu_recoil_m",
     "logy": False,
-    "stack": True,
-    "rebin": 100,
+    "stack": False,
+    # "rebin": 100,
     "xmin": 120,
     "xmax": 140,
     "ymin": 0,
-    "ymax": 200,
+    "ymax": 300,
     "xtitle": "Recoil (GeV)",
-    "ytitle": "Events / 100 MeV",
+    "ytitle": "Events",
 }
 
 hists["jj_m"] = {
     "output": "jj_m",
     "logy": False,
-    "stack": True,
+    "stack": False,
     "rebin": 2,
-    "xmin": 50,
-    "xmax": 150,
+    "xmin": 100,
+    "xmax": 130,
     "ymin": 0,
-    "ymax": 4000,
+    "ymax": 150,
     "xtitle": "m_{jj} (GeV)",
     "ytitle": "Events / 2 GeV",
 }

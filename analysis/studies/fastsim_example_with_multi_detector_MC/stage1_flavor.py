@@ -17,7 +17,15 @@ processList = {
     "p8_ee_ZH_Zmumu_ecm240_card_IDEA_lighterVXD_50pc": {
         "fraction": 1,
         "crossSection": 0.201868 * 0.034,
-    },        
+    },    
+    "p8_ee_ZH_Zmumu_ecm240_card_IDEA_3T": {
+        "fraction": 1,
+        "crossSection": 0.201868 * 0.034,
+    },    
+    "p8_ee_ZH_Zmumu_ecm240_card_IDEA_SiTracking": {
+        "fraction": 1,
+        "crossSection": 0.201868 * 0.034,
+    },            
 }
 
 # Production tag when running over EDM4Hep centrally produced events, this points to the yaml files for getting sample statistics (mandatory)

@@ -1,6 +1,6 @@
 # FLARE Setting
 name : paper_examples
-version:  50000_multi_detector_higgs_analysis
+version:  1000_multi_detector_higgs_analysis
 description: Example to show how we can use the full flare workflow with pythia8 prodtype along with 3 different detector cards. 
 
 # b2luigi settings

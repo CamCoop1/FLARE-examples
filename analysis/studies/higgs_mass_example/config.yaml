@@ -1,0 +1,8 @@
+# FLARE Setting
+name : paper_examples
+version:  higgs_mass
+description: Example to show the https://github.com/HEP-FCC/FCCAnalyses/tree/master/examples/FCCee/higgs/mH-recoil example analysis in action for flare
+# b2luigi settings
+batch_system: slurm
+slurm_settings: 
+  mem: 5GB
