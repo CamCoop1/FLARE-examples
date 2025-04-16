@@ -2,5 +2,6 @@
 
 **/data/
 **/log/
+**/logs/
 
 **/__pycache__/
