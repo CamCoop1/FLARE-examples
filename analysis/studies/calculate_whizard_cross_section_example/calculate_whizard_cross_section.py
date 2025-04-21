@@ -5,36 +5,31 @@ from pathlib import Path
 import b2luigi as luigi
 from astropy.units import fbarn as fb
 from astropy.units import pbarn as pb
+from uncertainties import ufloat
 
 import flare
-from flare.src.mc_production.mc_production_types import get_mc_production_types
-from flare.src.mc_production.tasks import get_mc_prod_stages_dict
-from flare.src.utils.tasks import OutputMixin
-from flare.cli.arguments import get_args
 
 
 # Branching fraction from 2024 PDG https://pdg.lbl.gov/2024/reviews/rpp2024-rev-higgs-boson.pdf
 BFs = {
-    "wzp6_ee_nunuH_Hbb_ecm240": 5.82e-1,
-    "wzp6_ee_mumuH_Hbb_ecm240": 5.82e-1,
-    "wzp6_ee_bbH_HWW_ecm240": 2.14e-1,
-    "wzp6_ee_bbH_Hbb_ecm240": 5.82e-1,
+    "wzp6_ee_nunuH_Hbb_ecm240": ufloat(5.82e-1, 5.82e-1*0.013),
+    "wzp6_ee_mumuH_Hbb_ecm240": ufloat(5.82e-1, 5.82e-1*0.013),
+    "wzp6_ee_bbH_HWW_ecm240": ufloat(2.14e-1, 2.14e-1*0.015),
+    "wzp6_ee_bbH_Hbb_ecm240": ufloat(5.82e-1, 5.82e-1*0.013),
 }
 
 
-class DownloadWhizardSinFile(OutputMixin, luigi.DispatchableTask):
+class DownloadWhizardSinFile(flare.DispatchableTask):
     """
     Task for downloading the .sin files for a datatype
     """
-    @property
-    def results_subdir(self):
-        return luigi.get_setting("results_subdir")
     
     datatype = luigi.Parameter()
 
     @property
     def output_dir(self):
-        return luigi.get_setting("dataprod_dir")
+        return flare.get_setting("dataprod_dir")
+    
     @property
     def raw_github_url(self):
         return f"https://raw.githubusercontent.com/HEP-FCC/FCC-config/refs/heads/winter2023/FCCee/Generator/Whizard/v3.0.3/{self.datatype}.sin"
@@ -49,21 +44,22 @@ class DownloadWhizardSinFile(OutputMixin, luigi.DispatchableTask):
         
 
 
-class ExtractCrossSectionFromWhizardLog(OutputMixin, luigi.DispatchableTask):
+class ExtractCrossSectionFromWhizardLog(flare.DispatchableTask):
     """
     Extract the cross section from the whizard.log file created during MCProductionStage1
     """
 
-    prodtype = luigi.EnumParameter(enum=get_mc_production_types())
+    prodtype = luigi.EnumParameter(enum=flare.get_mc_production_types())
     datatype = luigi.Parameter()
 
-    @property
-    def results_subdir(self):
-        return luigi.get_setting("results_subdir")
 
     @property
     def whizard_log_regrex(self):
-        return r"(?m)^\s*15\s+\d+\s+([-+]?\d+\.\d+E[+-]\d+)"
+        """ 
+        Regex to find the Cross Section and Error from the log
+        """
+        return r"(?m)^\s*15\s+\d+\s+([-+]?\d+\.\d+E[+-]?\d+)\s+([-+]?\d+\.\d+E[+-]?\d+)"
+
 
     @property
     def output_file_name(self):
@@ -84,7 +80,7 @@ class ExtractCrossSectionFromWhizardLog(OutputMixin, luigi.DispatchableTask):
         to make it require the DownloadWhizardSinFile, which as the name suggest
         will download the .sin file from the public github
         """
-        stage1_task = get_mc_prod_stages_dict(inject_stage1_dependency=DownloadWhizardSinFile)['stage1']
+        stage1_task = flare.get_mc_prod_stages_dict(inject_stage1_dependency=DownloadWhizardSinFile)['stage1']
         yield self.clone(stage1_task)
 
     def output(self):
@@ -96,35 +92,42 @@ class ExtractCrossSectionFromWhizardLog(OutputMixin, luigi.DispatchableTask):
         with self.stage1_whizard_log_file.open("r") as f:
             whizard_log = f.read()
 
-        match = re.search(self.whizard_log_regrex, whizard_log)
+        # We use findall as we are locating the final row of the printed table
+        # which is row 15, however this row number is printed twice so we 
+        # find all
+        matches = re.findall(self.whizard_log_regrex, whizard_log)
 
-        if match:
-            cs_fb = float(match.group(1)) * fb
+        if matches:
+            # We get the last two matches as this will be the final row
+            # of our table
+            cross_section, err = matches[-1]
+            # Get the cross section and error and using astropy's fbarn and pbarn we 
+            # covert to the pbard output required for comparison with the centrally produced MC
+            cs_pb = (float(cross_section) * fb ).to(pb)
+            err_pb = (float(err) * fb).to(pb)
         else:
             raise ValueError(
                 f"Cross section could not be found for {self.datatype} in the whizard log"
             )
-
-        total_cs_fb = cs_fb * BFs[self.datatype]
-        total_cs_pb = round(total_cs_fb.to(pb).value, 5)
+        # Note the the BFs are a ufloat and by making our cross section a ufloat
+        # the uncertainties package handles all the calculations for the resultant uncertainty
+        total_cs_pb = ufloat(cs_pb.value, err_pb.value) * BFs[self.datatype]
         
         with open(self.get_output_file_name(self.output_file_name), "w") as f:
             f.write(f"{self.datatype}: {total_cs_pb}\n")
 
 
-class CompileCrossSections(OutputMixin, luigi.DispatchableTask):
+class CompileCrossSections(flare.DispatchableTask):
     """
     Get all the cross sections for each datatype and compile them into a single file
     """
 
-    prodtype = luigi.EnumParameter(enum=get_mc_production_types())
+    prodtype = luigi.EnumParameter(enum=flare.get_mc_production_types())
     
-    @property
-    def results_subdir(self):
-        return luigi.get_setting("results_subdir")
+
 
     def requires(self):
-        for datatype in luigi.get_setting("dataprod_config")["datatype"]:
+        for datatype in flare.get_setting("dataprod_config")["datatype"]:
             yield ExtractCrossSectionFromWhizardLog(
                 prodtype=self.prodtype, datatype=datatype
             )
@@ -150,15 +153,11 @@ class CompileCrossSections(OutputMixin, luigi.DispatchableTask):
 
 if __name__ == "__main__":
     
-    args = get_args()
-    # build_executable_and_save_to_settings_manager(args)
-    # load_settings_into_manager(args)
+    args = flare.get_args()
+    args.mcprod = True
     flare.process(
         CompileCrossSections(
-            prodtype=get_mc_production_types()["whizard"]
+            prodtype=flare.get_mc_production_types()["whizard"]
         ),
-        batch=True,
-        workers=10,
-        ignore_additional_command_line_args=True,
         flare_args = args
     )
