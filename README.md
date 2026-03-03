@@ -14,10 +14,13 @@ All of these commandline tools are available from the [Key4HEP stack](https://gi
 </details>
 
 <details><summary> Installation</summary>
+
 To begin, install hep-flare using your package manager
+
 ```
 pip install hep-flare
 ```
+
 Next, familiarise yourself with the flare CLI tool 
 
 ```
