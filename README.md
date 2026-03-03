@@ -128,8 +128,12 @@ flare run analysis
 
 
 </details>
-<details><summary> Large Batch Example </summary>
-To run the Large Batch Example, the easiest way is to submit the following command
+<details><summary> MCProduction Workflow Examples </summary>
+Here we will discus the MC production capabilities of Flare. This workflow manager aims to provide the tools to make multi-detector analysis easy at the FCC. We will discuss how we can generate MC for different:
+
+- Detector configurations
+- MC generators
+- Local versions of MC generators (instead of usings ones provided by Key4HEP) 
 
 ```
 flare run mcproduction --version=large_mc_batch_example --study-dir analysis/studies/large_mc_batch_example  --config-yaml analysis/config/ 
