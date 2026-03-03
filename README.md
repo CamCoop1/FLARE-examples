@@ -1,4 +1,8 @@
 # FLARE Examples 
+
+[![CPC DOI](https://img.shields.io/badge/CPC-10.1016/j.cpc.2026.110062-blue?style=flat-square&logo=doi)](https://doi.org/10.1016/j.cpc.2026.110062)
+[![Website](https://img.shields.io/badge/Website-FLARE-blue?style=flat-square)](https://camcoop1.github.io/FLARE/)
+
 Here we will discuss how to setup and run the examples stored in this repo.
 <details><summary>Prerequisites</summary>
 Flare is a python package and as such requires a python installation to be useable on your machine. 
@@ -273,3 +277,9 @@ cd Custom_workflows/calculate_whizard_cross_section_example/
 python3 calculate_whizard_cross_section.py --mcprod
 ```
 </details>
+
+
+## How to Cite:
+
+@article{CooperHarris:2025lqd, author = "Cooper Harris, Cameron and Desai, Aman", title = "{FLARE: FCCee b2Luigi Automated Reconstruction and Event processing}", eprint = "2506.16094", archivePrefix = "arXiv", primaryClass = "hep-ph", reportNumber = "ADP-25-23/T1285", doi = "10.1016/j.cpc.2026.110062", journal = "Comput. Phys. Commun.", volume = "322", pages = "110062", year = "2026" }
+
