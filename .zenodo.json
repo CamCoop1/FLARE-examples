@@ -1,0 +1,36 @@
+{
+  "title": "FLARE Examples: Reproducible FCC-ee Analysis and MC Production Workflows",
+  "description": "Example workflows for the hep-flare framework"
+  "upload_type": "software",
+  "access_right": "open",
+  "creators": [
+    {
+      "name": "Harris, Cameron Cooper",
+      "orcid": "0000-0003-0448-4244",
+      "affiliation": "Adelaide University"
+    }
+  ],
+  "contributors": [
+    {
+      "name": "Desai, Aman",
+      "orcid": "0000-0003-2631-9696",
+      "affiliation": "Adelaide University"
+    }
+  ],
+  "keywords": [
+    "FLARE",
+    "FCC-ee",
+    "FCCAnalysis",
+    "b2luigi",
+    "Monte Carlo production",
+    "high-energy physics",
+    "reproducible workflows"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/CamCoop1/FLARE-examples",
+      "relation": "isSupplementTo",
+      "resource_type": "software"
+    }
+  ]
+}
