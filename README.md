@@ -85,7 +85,7 @@ stage2 -> stage2_histmaker_flavor.py
 plots -> plots_flavor.py
 ```
 
-With this in mind we can now run our workflow. To do this, we envoke the `flare` commandline tool and select the `run analysis` subcommand as shown below
+With this in mind we can now run our workflow. To do this, we invoke the `flare` commandline tool and select the `run analysis` subcommand as shown below
 ```
 flare run analysis 
 ```
@@ -120,7 +120,7 @@ add_stage:
 
 Each sub-argument of `add_stage` is a bundle that encapsulates everything Flare needs to know to create a Task. The `cmd` is the command that you wish to wrap with numbered curly braces for formatting. The `args` is the list of ordered arguments to go into our ordered `cmd` formatted curly braces. `output_file` is the output directory name. Then lastly, each bundle must have at least one `requires` (string) or `required_by` (list of string) arguments. This is how we tell Flare the order in which to insert our custom Tasks. 
 
-To run this example, we envoke the `flare` commandline too like so:
+To run this example, we invoke the `flare` commandline too like so:
 
 ``` 
 flare run analysis
@@ -135,42 +135,138 @@ Here we will discus the MC production capabilities of Flare. This workflow manag
 - MC generators
 - Local versions of MC generators (instead of usings ones provided by Key4HEP) 
 
+
+
+# Large Batch Example - Single MC Generator
+This example we intend to show how one can generate a large quantity of MC types automatically using Flare. To begin, `cd` into the `MCProduction_workflow/large_mc_batch_example`. Note there is a `flare.yaml` and an `mc_production` directory inside. We seperate the MC production files into their own folder to keep things tidy. Inside the this `mc_production` directory is a `flare_mc.yaml` this is how we configure our MC production workflow. 
+
+``` YAML
+# flare_mc.yaml
+global_prodtype : whizard
+
+datatype:
+    - wzp6_ee_nunuH_Hbb_ecm240
+    - wzp6_ee_mumuH_Hbb_ecm240
+    - wzp6_ee_bbH_HWW_ecm240
+    - wzp6_ee_bbH_Hbb_ecm240
 ```
-flare run mcproduction --version=large_mc_batch_example --study-dir analysis/studies/large_mc_batch_example  --config-yaml analysis/config/ 
+This is what it looks like, we declare the `global_prodtype` this is the MC generator we want to use for **ALL** the MC we generate. Then `datatype` which is a list of unique names, you'll note these names match the `.sin` files in our `mc_directory`. This is how Flare will find these files. 
+
+To run this example, invoke the flare CLI tool like so:
+
+
 ```
-)
+flare run mcproduction
+```
+
+# Large Batch Multi Production Type Example - Multiple MC Generators 
+This example shows how Flare can generate different MC using different generators all in a single workflow. Below is the `flare_mc.yaml` that makes this happen. Note that now we do not declare a `global_prodtype` rather we create a dictionary under each `datatype` entry which declares its own `prodtype` allowing us to declare on a MC type basis what generator we wish to use. 
+
+``` YAML
+# flare_mc.yaml
+datatype:
+    - wzp6_ee_mumuH_Hbb_ecm240:
+        prodtype: whizard
+    - wzp6_ee_bbH_HWW_ecm240:
+        prodtype: whizard
+    - wzp6_ee_bbH_Hbb_ecm240:
+        prodtype: whizard
+    - p8_ee_WW_ecm240: 
+        prodtype : pythia8
+    - p8_ee_ZZ_ecm240: 
+        prodtype : pythia8
+    - p8_ee_ZH_ecm240 : 
+        prodtype : pythia8
+```
+
+To run this example, invoke the Flare CLI tool again:
+
+```
+flare run mcproduction
+```
+
+# Multiple Detector - Single MC Generator
+In this example, we show how Flare can generator MC using different detector configuations. Below is the `flare_mc.yaml` which makes this happen. Note we are setting our `global_prodtype` to be Whizard and again have declared our list of `datatype`. However now we are declaring the `card`, which is a list of the different detector configuration cards that we wish to use inside our `mc_production` directory. Flare will then take each unique combination of `datatype` and `card` and create a Task. This results in 24 unique Tasks which Flare will orchestrate. 
+
+``` YAML
+# flare_mc.yaml
+
+global_prodtype : whizard
+
+datatype:
+    - wzp6_ee_nunuH_Hbb_ecm240
+    - wzp6_ee_mumuH_Hbb_ecm240
+    - wzp6_ee_bbH_HWW_ecm240
+    - wzp6_ee_bbH_Hbb_ecm240
+    
+card:
+    - card_IDEA
+    - card_IDEA_SiTracking
+    - card_IDEA_3T
+    - card_IDEA_lighterVXD_35pc
+    - card_IDEA_lighterVXD_50pc
+    - card_IDEA_better_singlehitReso_30pc_lighterVXD_50pc
+```
+
+Again, to run this example invoke the Flare CLI:
+
+```
+flare run mcproduction
+```
+
+# Multiple Detector - Multiple MC Generators 
+Much like in the [Large Batch Multi Production Type Example - Multiple MC Generators](#large-batch-multi-production-type-example---multiple-m-generators) we can also generate MC for multiple different detector configurations whilst using different MC generators. The `flare_mc.yaml` which makes this happen is shown below.
+
+``` YAML
+# flare_mc.yaml
+datatype:
+    - wzp6_ee_mumuH_Hbb_ecm240:
+        prodtype: whizard
+    - p8_ee_WW_ecm240: 
+        prodtype : pythia8
+    - p8_ee_ZZ_ecm240: 
+        prodtype : pythia8
+    - p8_ee_ZH_ecm240 : 
+        prodtype : pythia8
+card:
+    - card_IDEA
+    - card_IDEA_lighterVXD_35pc
+    - card_IDEA_lighterVXD_50pc
+    
+``` 
+
+Again, to run this example invoke the Flare CLI:
+
+```
+flare run mcproduction
+```
+
+</details>
+
+<details><summary> MC Production and FCCAnalysis Workflows </summary>
+    The FCCAnalysis and MC production workflows are also able to be connected to form an even larger workflow. This is shown in the example below 
+
+# Fastsim Multi Detector
+In this example, we will be conducting a Multi Detector study at the FCCee. To do this we have our FCCAnalysis scripts inside `FCCAnalysis_and_MCProduction_workflow/example_fastsim_multidetector_mc` along with our MC Production scripts inside `FCCAnalysis_and_MCProduction_workflow/example_fastsim_multidetector_mc/mc_production`. With all of this in place, we can run this example using the below Flare CLI command, ensuring we are cd'd into the example directory.
+
+```
+flare run analysis --mcprod
+```
+The `--mcprod` flag tells Flare that we wish to attach the MC Production workflow before our FCCAnalysis workflow and to pipe the outputs of the MC Production.
+
+
+</details>
+
+
+<details><summary>Custom_workflows</summary>
+    Inside of the Flare framework we are able to create our own b2luigi workflows USING the already established Flare tasks. 
+
 # Whizard Cross Section 
 The whizard cross section calculation is a custom workflow that uses the flare functionality to take the whizard production step of the MC Production workflow and create our own workflow. To do this, we use the `get_args` cli tool
 inside of `flare.cli.arguments`. By passing the parsed arguments to the `flare.process` function, flare handles the entire workflow for you. Run the following command to try it out
 
 ```
-python3 analysis/studies/calculate_whizard_cross_section_example/calculate_whizard_cross_section.py --version=large_mc_batch_example --study-dir analysis/studies/calculate_whizard_cross_section_example  --config-yaml analysis/config/ --mcprod
-```
-
-# Whizard Multiple Detector Card Example
-The multiple detector example displays flare's ability to produce MC using any number of detector cards. The MC config yaml can be found inside the `analysis/studies/multiple_detector_card_example/mc_production/details.yaml`. 
-To enable flare's multi-card capability, the user must set the `card` list in their config like so:
-
-``` YAML
-card : 
-    - card_IDEA
-    - card_IDEA_3T
-    - card_IDEA_SiTracking
-```
-
-These names must match those of the cards in your `mc_production` directory. To run this example use the following command:
-
-```
-flare run mcproduction --study-dir analysis/studies/multiple_detector_card_example --config-yaml analysis/studies/multiple_detector_card_example
-```
-
-# Note
-Instead of adjusting the commandline arguments, you can instead just change the settings inside the `analysis/config/details.yaml` each time you wish to run an example. Then, when you call the flare CLI or your own custom workflow (see [Whizard Cross Section](#whizard_cross_section))
-just parse the `--config-yaml` argument like so:
-
-```
-flare run analysis --config-yaml analysis/config
-flare run mcproduction --config-yaml analysis/config
-python3 custom_workflow.py --config-yaml analysis/config
+cd Custom_workflows/calculate_whizard_cross_section_example/
+python3 calculate_whizard_cross_section.py --mcprod
 ```
 </details>
