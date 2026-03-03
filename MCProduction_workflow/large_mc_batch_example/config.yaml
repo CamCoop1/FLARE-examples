@@ -1,0 +1,9 @@
+# FLARE Setting
+name : paper_examples
+version:  1000_large_batch_test-flare-patch
+description: Example to show how the large batch system works and its timings
+
+# b2luigi settings
+batch_system: slurm
+slurm_settings: 
+  mem: 5GB

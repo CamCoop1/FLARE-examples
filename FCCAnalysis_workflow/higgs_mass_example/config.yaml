@@ -1,0 +1,8 @@
+# FLARE Setting
+version:  basic_fccanalysis_workflow
+description: Example to show fccanalysis workflow 
+
+# # b2luigi settings
+batch_system: slurm
+slurm_settings:
+  mem: 5GB

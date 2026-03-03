@@ -1,0 +1,12 @@
+**venv**
+
+**/log/
+**/logs/
+**/data/**
+**/.root/**
+**/task_files/**
+
+**/__pycache__/
+**HWW_Test_FLARE**
+externals
+analysis

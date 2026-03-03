@@ -1,0 +1,9 @@
+# FLARE Setting
+name : pyhep_exaples
+version:  1000_events
+description: Example to show how the large batch system works
+
+# b2luigi settings
+batch_system: slurm
+slurm_settings: 
+  mem: 5GB

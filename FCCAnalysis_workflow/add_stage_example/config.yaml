@@ -1,0 +1,31 @@
+# FLARE Setting
+version:  higgs_mass_v2
+description: Example to show the https://github.com/HEP-FCC/FCCAnalyses/tree/master/examples/FCCee/higgs/mH-recoil example analysis in action for flare
+
+add_stage:
+       HelloWorld:
+        cmd: python3 {0}
+        args:
+          - ml_<>.py
+        output_file: output.model
+        requires: 'Stage2'
+
+       Combine:
+        cmd: python3 {0}
+        args:
+           - combine_<>.py
+        output_file: output.model
+        requires: 'helloworld'
+
+       Move:
+        cmd: python3 {0}
+        args:
+           - move_<>.py
+        output_file: output.model
+        requires: 'stage2'
+        required_by : ['plots']
+
+# # b2luigi settings
+batch_system: slurm
+slurm_settings:
+  mem: 5GB

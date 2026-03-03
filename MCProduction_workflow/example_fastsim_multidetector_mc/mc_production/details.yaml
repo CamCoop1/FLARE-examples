@@ -1,0 +1,16 @@
+"$model" : "UserMCProdConfigModel"
+
+global_prodtype: pythia8
+
+global_env_script_path : setup.sh
+
+datatype:
+    - p8_ee_ZH_Zmumu_ecm240 
+
+card:
+    - card_IDEA
+    - card_IDEA_lighterVXD_35pc
+    - card_IDEA_lighterVXD_50pc
+    - card_IDEA_3T
+    - card_IDEA_SiTracking
+    

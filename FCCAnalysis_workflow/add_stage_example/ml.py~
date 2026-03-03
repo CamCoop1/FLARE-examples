@@ -1,0 +1,219 @@
+import uproot
+import pandas as pd
+import xgboost as xgb
+from sklearn.model_selection import train_test_split
+import ROOT
+import os
+import pickle
+
+# -----------------------------
+# Config
+# -----------------------------
+max_events = 200000000
+weight_sf = 100000
+
+
+variables = [
+
+            "muons_p_1",
+            "muons_e_1",
+            "muons_phi_1",
+            "muons_theta_1",
+
+            "muons_p_2",
+            "muons_e_2",
+            "muons_phi_2",
+            "muons_theta_2",
+
+            "electrons_p_1",
+            "electrons_e_1",
+            "electrons_phi_1",
+            "electrons_theta_1",
+
+            "electrons_p_2",
+            "electrons_e_2",
+            "electrons_phi_2",
+            "electrons_theta_2",
+
+            "MissingP",
+            "MissingEta",
+
+            "visible_energy",
+            "visible_pt",
+
+            "massZ",
+            "energyZ",
+            "fakemassZ",
+            "fakeenergyZ",
+            "recoil_mass", 
+
+
+
+            "MET_over_total_energy",
+
+            "dR_lep12",
+            "dR_lep13",
+            "dR_lep14",
+            "dR_lep23",
+            "dR_lep24",
+            "dR_lep34",
+            "m_lep12",
+            "m_lep13",
+            "m_lep14",
+            "m_lep23",
+            "m_lep24",
+            "m_lep34",
+            "p_lep12",
+            "p_lep13",
+            "p_lep14",
+            "p_lep23",
+            "p_lep24",
+            "p_lep34"
+        
+]
+
+ROOT.gROOT.SetBatch(True)
+
+# -----------------------------
+# Load process function
+# -----------------------------
+def load_process(fIn, variables, target=0, weight_sf=1.):
+    """Load a ROOT file, return pandas DataFrame with target and weight"""
+    with uproot.open(fIn) as f:
+        tree = f["events"]
+        n_entries = min(tree.num_entries, max_events)
+        
+        arrays = tree.arrays(
+            variables,
+            entry_start=0,
+            entry_stop=n_entries,
+            library="np"
+        )
+
+    df = pd.DataFrame(arrays)
+    # Shuffle at load time
+    df = df.sample(frac=1, random_state=42).reset_index(drop=True)
+
+    df['target'] = target
+    df['weight'] =1# weight_sf / n_entries
+    print(f"Loaded {fIn} ({n_entries} events), weight={df['weight'].iloc[0]}")
+    return df
+
+files = [
+    "wzp6_ee_mumuH_HZZ_ecm240",
+    'p8_ee_ZZ_ecm240',
+    'p8_ee_WW_ecm240',
+    "wzp6_ee_tautauH_HWW_ecm240",
+    "wzp6_ee_nunuH_HZZ_ecm240",
+    "wzp6_ee_tautauH_Hmumu_ecm240",
+    "wzp6_ee_eeH_Htautau_ecm240",
+    "wzp6_ee_mumuH_Htautau_ecm240",
+    "wzp6_ee_eeH_HZZ_ecm240",
+]
+
+# -----------------------------
+# Load backgrounds once
+# -----------------------------
+print("Loading background samples...")
+background_dfs = []
+
+inputDir = ""
+outputDir = ""
+
+for fname in files:
+    # Use default weight_sf unless you want to customize per file
+    df = load_process(f"{inputDir}/{fname}.root", variables, weight_sf=weight_sf)
+    background_dfs.append(df)
+
+backgrounds = pd.concat(background_dfs, ignore_index=True)
+
+print("Backgrounds loaded.")
+
+# -----------------------------
+# XGBoost parameters
+# -----------------------------
+xgb_params = {
+    "objective": "binary:logistic",
+    "eval_metric": "logloss",
+    "max_depth": 5,
+    "learning_rate": 0.03,
+    "n_estimators": 1000,
+    "subsample": 0.6,
+    "colsample_bytree": 0.6,
+    "gamma": 1.0,
+    "min_child_weight": 5,
+    "reg_lambda": 3.0,
+    "reg_alpha": 0.5,
+    "tree_method": "hist",
+    "n_jobs": -1,
+    "random_state": 42,
+    "early_stopping_rounds": 50
+}
+# -----------------------------
+# Training function
+# -----------------------------
+def run(sigName, fOutName, backgrounds):
+    """Train XGBoost for a signal file and save to ROOT + pickle"""
+    # Load signal
+    sig_df = load_process(sigName, variables, target=1, weight_sf=weight_sf)
+
+    # Merge with backgrounds
+    data = pd.concat([sig_df, backgrounds], ignore_index=True)
+    
+    data = data.sample(frac=1, random_state=42).reset_index(drop=True)  # shuffle
+
+    # Split train/test
+    X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(
+        data[variables], data['target'], data['weight'], test_size=0.25, random_state=42
+    )
+
+    # Convert to numpy
+    X_train, X_test = X_train.to_numpy(), X_test.to_numpy()
+    y_train, y_test = y_train.to_numpy(), y_test.to_numpy()
+    w_train, w_test = w_train.to_numpy(), w_test.to_numpy()
+
+    # Train XGBoost
+    print(f"Training model for {sigName}...")
+    eval_set = [(X_train, y_train), (X_test, y_test)]
+    bdt = xgb.XGBClassifier(**xgb_params)
+    bdt.fit(X_train, y_train, sample_weight=w_train, eval_set=eval_set,  verbose=True)
+
+    # Save to TMVA ROOT
+    print(f"Saving TMVA model to {fOutName}.root...")
+    ROOT.TMVA.Experimental.SaveXGBoost(bdt, f"bdt_model", fOutName+".root", num_inputs=len(variables))
+
+    # Save variable list in ROOT file
+    variables_list = ROOT.TList()
+    for var in variables:
+        variables_list.Add(ROOT.TObjString(var))
+    fOut = ROOT.TFile(fOutName+".root", "UPDATE")
+    fOut.WriteObject(variables_list, "variables")
+    fOut.Close()
+
+    # Save to pickle
+    print(f"Saving pickle {fOutName}.pkl...")
+    save = {
+        'model': bdt,
+        'train_data': X_train,
+        'test_data': X_test,
+        'train_labels': y_train,
+        'test_labels': y_test,
+        'train_weights': w_train,
+        'test_weights': w_test,
+        'variables': variables
+    }
+    pickle.dump(save, open(fOutName+".pkl", "wb"))
+    print("Done.\n")
+
+# -----------------------------
+# Loop over all signal masses
+# -----------------------------
+
+sig_file = f"{inputDir}/wzp6_ee_eeH_HWW_ecm240.root"
+out_file = f"{outputDir}/models/bdt_model_eeH_HWW_ecm240"
+
+os.makedirs("models", exist_ok=True)
+
+run(sig_file, out_file, backgrounds)
+
+print("All models trained and saved.")
