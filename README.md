@@ -1,6 +1,6 @@
 # FLARE Examples 
-
-#  Prerequisites
+Here we will discuss how to setup and run the examples stored in this repo.
+<details><summary>Prerequisites</summary>
 Flare is a python package and as such requires a python installation to be useable on your machine. 
 
 Flare also does not provide the commandline tools upon which the workflow management tools operate. These commandline tools include
@@ -11,8 +11,9 @@ Flare also does not provide the commandline tools upon which the workflow manage
 - Whizard
 
 All of these commandline tools are available from the [Key4HEP stack](https://github.com/key4hep) which is provided by the CVMFs. 
+</details>
 
-# Installation
+<details><summary> Installation</summary>
 To begin, install hep-flare using your package manager
 ```
 pip install hep-flare
@@ -35,8 +36,9 @@ As stated in [Prerequisites](#prerequisites) the underlying packages which Flare
 ```
 source /cvmfs/sw.hsf.org/key4hep/setup.sh
 ```
+</details>
 
-# Setup 
+<details><summary> Setup </summary>
 Inside each example directory there is a `flare.yaml` which is the configuration file which flare will use to access and manage any settings the user wishes to change. You may wish to change the batch system to one of the available for b2luigi depending on your required batch system ([b2luigi batch systems](https://b2luigi.belle2.org/features/batch.html#batch-system-specific-settings)). To do this we update the `batch_system` variable inside the `flare.yaml` file like so 
 
 ``` 
@@ -64,7 +66,7 @@ class UserConfigModel(BaseModel):
     studydir: Path | str = Field(default_factory=Path.cwd)
     outputdir: Path | str = Field(default_factory=Path.cwd)
 ```
-
+</details>
 <details><summary> FCCAnalysis Workflow Examples </summary>
 Here we will discuss the examples located inside the [FCCAnalysis_workflow](https://github.com/CamCoop1/FLARE-examples/tree/main/FCCAnalysis_workflow) directory.
 
