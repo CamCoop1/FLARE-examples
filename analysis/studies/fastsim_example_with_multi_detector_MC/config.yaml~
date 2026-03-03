@@ -1,9 +1,0 @@
-# FLARE Setting
-name : paper_examples
-version:  OLDSETUP_multi_detector_higgs_analysis
-description: Example to show how we can use the full flare workflow with pythia8 prodtype along with 3 different detector cards. 
-
-# b2luigi settings
-batch_system: slurm
-slurm_settings: 
-  mem: 5GB
