@@ -1,0 +1,12 @@
+set nb_core 14
+define j = j b b~
+generate e+ e- > h z
+output test
+launch
+set nevents 100
+set pdlabel fcce240ll
+set lpp1 -3
+set lpp2 3
+set ebeam1 120
+set ebeam2 120
+set sde_strategy 1
