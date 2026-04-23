@@ -29,6 +29,9 @@ This can be a symlink to the centrally available CLD configuration in CVMFS
 
      ln -s $CLDCONFIG/share/CLDConfig/CLDReconstruction.py k4run_CLDReconstruction.py
 
+Additionally, inside the flare\_mc.yaml file there is a variable which can be set called "k4run_sandbox". We added this as some steering scripts (e.g CLD detector and recon) have a large amount of accompaning python modules that are not able to be loaded unless in the same working directory as the steering script. What a user can do is pass the path to the directory in which all these additional files live. Flare will attach them via symlinking to the working directory of the k4run step and ensure all additional files are present
+
+
 # Step 4: the flare_mc.yaml
 Inside here we set the following 
 
