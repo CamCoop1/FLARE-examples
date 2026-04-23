@@ -1,0 +1,6 @@
+name : run3
+
+# b2luigi settings
+batch_system: slurm
+slurm_settings: 
+  mem: 5GB

@@ -1,0 +1,16 @@
+"$model" : "UserMCProdConfigModel"
+
+datatype:
+    - wzp6_ee_mumuH_Hbb_ecm240:
+        prodtype: whizard
+    - p8_ee_WW_ecm240: 
+        prodtype : pythia8
+    - p8_ee_ZZ_ecm240: 
+        prodtype : pythia8
+    - p8_ee_ZH_ecm240 : 
+        prodtype : pythia8
+card:
+    - card_IDEA
+    - card_IDEA_lighterVXD_35pc
+    - card_IDEA_lighterVXD_50pc
+    

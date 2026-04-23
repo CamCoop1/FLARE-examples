@@ -1,0 +1,5 @@
+0: 262.60 seconds
+1: 242.54 seconds
+2: 242.53 seconds
+3: 242.54 seconds
+Average: 247.552 seconds
