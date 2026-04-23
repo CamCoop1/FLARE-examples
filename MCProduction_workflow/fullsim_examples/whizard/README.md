@@ -33,15 +33,14 @@ This can be a symlink to the centrally available CLD configuration in CVMFS
 Inside here we set the following 
 
        ``` yaml
-'$model' : UserMCProdConfigModel
+       '$model' : UserMCProdConfigModel
 
-global_prodtype : whizard_fullsim
+       global_prodtype : whizard_fullsim
 
-datatype:
-	- wzp6_ee_mumuH_Hbb_ecm240
+       datatype:
+       	- wzp6_ee_mumuH_Hbb_ecm240
 	- wzp6_ee_bbH_Hbb_ecm240
        	- wzp6_ee_qqH_HWW_ecm240       
-
        ```
 
 # Running Flare
