@@ -1,6 +1,0 @@
-'$model' : UserMCProdConfigModel
-
-global_prodtype : madgraph
-
-datatype:
-    - p8_ee_HZ_Zbb
